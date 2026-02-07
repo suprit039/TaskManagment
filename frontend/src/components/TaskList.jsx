@@ -6,13 +6,21 @@ import TaskItem from './TaskItem';
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
     const [filter, setFilter] = useState('');
+    const [error, setError] = useState('');
 
     const fetchTasks = async () => {
         try {
+            setError('');
             const data = await getTasks(filter);
-            setTasks(data);
+            if (Array.isArray(data)) {
+                setTasks(data);
+            } else {
+                setTasks([]);
+                console.error('Received invalid data format:', data);
+            }
         } catch (error) {
             console.error('Error fetching tasks:', error);
+            setError(error.message || 'Failed to fetch tasks');
         }
     };
 
@@ -44,7 +52,13 @@ const TaskList = () => {
                 </select>
             </div>
 
-            {tasks.length === 0 ? (
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                </div>
+            )}
+
+            {tasks.length === 0 && !error ? (
                 <p>No tasks found.</p>
             ) : (
                 <div className="grid gap-4">

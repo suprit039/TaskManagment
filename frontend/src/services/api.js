@@ -9,6 +9,14 @@ const getAuthHeaders = () => {
     };
 };
 
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'An error occurred' }));
+        throw new Error(error.message || 'Request failed');
+    }
+    return response.json();
+};
+
 export const getTasks = async (status = '') => {
   let url = API_URL;
   if (status) {
@@ -17,7 +25,7 @@ export const getTasks = async (status = '') => {
   const response = await fetch(url, {
       headers: getAuthHeaders()
   });
-  return response.json();
+  return handleResponse(response);
 };
 
 export const createTask = async (task) => {
@@ -26,7 +34,7 @@ export const createTask = async (task) => {
     headers: getAuthHeaders(),
     body: JSON.stringify(task),
   });
-  return response.json();
+  return handleResponse(response);
 };
 
 export const updateTask = async (id, updates) => {
@@ -35,7 +43,7 @@ export const updateTask = async (id, updates) => {
     headers: getAuthHeaders(),
     body: JSON.stringify(updates),
   });
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteTask = async (id) => {
@@ -43,5 +51,6 @@ export const deleteTask = async (id) => {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
-  return response.json();
+  return handleResponse(response);
 };
+
