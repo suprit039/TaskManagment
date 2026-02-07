@@ -25,12 +25,12 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ email, password }),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
+                const error = await response.json().catch(() => ({ message: 'Login failed' }));
+                throw new Error(error.message || 'Login failed');
             }
 
+            const data = await response.json();
             localStorage.setItem('user', JSON.stringify(data));
             setUser(data);
             return data;
@@ -47,12 +47,12 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ username, email, password }),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
+                const error = await response.json().catch(() => ({ message: 'Registration failed' }));
+                throw new Error(error.message || 'Registration failed');
             }
 
+            const data = await response.json();
             localStorage.setItem('user', JSON.stringify(data));
             setUser(data);
             return data;
